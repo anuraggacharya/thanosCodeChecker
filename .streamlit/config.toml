@@ -1,0 +1,25 @@
+[theme]
+base = "light"
+
+# Muted lavender — primary buttons, focus, selections
+primaryColor = "#8B7E9C"
+
+# Soft warm ivory — main app background
+backgroundColor = "#FAF7F2"
+
+# Pale sage — sidebar, widgets, tables, code blocks
+secondaryBackgroundColor = "#EEF2EA"
+
+# Muted charcoal — readable but not harsh
+textColor = "#3F4753"
+
+font = "serif"
+
+# Optional sidebar-specific pastel tones
+[theme.sidebar]
+backgroundColor = "#F3F1EC"
+secondaryBackgroundColor = "#E7EDE4"
+textColor = "#3F4753"
+
+[server]
+maxUploadSize = 200
