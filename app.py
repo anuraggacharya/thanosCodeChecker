@@ -4,7 +4,6 @@ import json
 import shutil
 import subprocess
 import tempfile
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -12,8 +11,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-
-
 
 APP_NAME = "Thanos"
 THANOS_IMAGE = Path(__file__).parent / "assets" / "thanos.png"
@@ -57,7 +54,7 @@ SECURITY_HIGH_CODES = {
 
 st.set_page_config(
     page_title=f"{APP_NAME} — Python & PySpark Quality Platform",
-    page_icon="🟣",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -66,6 +63,20 @@ st.set_page_config(
 # -----------------------------
 # UI helpers
 # -----------------------------
+
+import streamlit as st
+
+st.markdown("""
+<style>
+.stMainBlockContainer {
+    width: 75%;
+    max-width: 75%;
+    margin: 0 auto;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 
 def inject_thanos_watermark():
     if not THANOS_IMAGE.exists():
@@ -87,7 +98,7 @@ def inject_thanos_watermark():
         object-fit: cover;
         z-index: 999999;
         pointer-events: none;
-        opacity: 1;
+        opacity: 0.8;
         # border: 2px solid rgba(139, 126, 156, 0.35);
         # box-shadow: 0 8px 24px rgba(63, 71, 83, 0.12);
         # filter: drop-shadow(0 0 10px rgba(139, 126, 156, 0.22));
@@ -507,7 +518,7 @@ def render_score_gauge(score: int, title: str):
             title={"text": title},
             gauge={
                 "axis": {"range": [0, 100]},
-                "bar": {"color": "#7C3AED"},
+                "bar": {"color": "#E187C9"},
                 "steps": [
                     {"range": [0, 40], "color": "#FEE2E2"},
                     {"range": [40, 60], "color": "#FFEDD5"},
@@ -516,7 +527,7 @@ def render_score_gauge(score: int, title: str):
                     {"range": [90, 100], "color": "#BBF7D0"},
                 ],
                 "threshold": {
-                    "line": {"color": "#111827", "width": 3},
+                    "line": {"color": "#6F6E75", "width":3},
                     "thickness": 0.8,
                     "value": score,
                 },
@@ -528,7 +539,7 @@ def render_score_gauge(score: int, title: str):
         height=330,
         margin=dict(l=20, r=20, t=45, b=20),
         paper_bgcolor="rgba(0,0,0,0)",
-        font_color="#111827",
+        font_color="#243354",
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -566,12 +577,12 @@ def render_status_charts(tests: list[dict], title_prefix: str = ""):
         title=f"{title_prefix}Test outcomes",
         labels={"x": "Status", "y": "Count"},
         color_discrete_map={
-            "Passed": "#16A34A",
-            "Failed": "#DC2626",
-            "Error": "#B91C1C",
-            "Skipped": "#CA8A04",
-            "Expected failure": "#64748B",
-            "Unexpected pass": "#EA580C",
+            "Passed": "#727234",
+            "Failed": "#8a2f37",
+            "Error": "#e74423",
+            "Skipped": "#e0ac46",
+            "Expected failure": "#9C9C9C",
+            "Unexpected pass": "#75879c",
         },
     )
 
@@ -579,7 +590,7 @@ def render_status_charts(tests: list[dict], title_prefix: str = ""):
         showlegend=False,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font_color="#111827",
+        font_color="#27385B",
     )
 
     col1.plotly_chart(fig_status, use_container_width=True)
@@ -597,14 +608,14 @@ def render_status_charts(tests: list[dict], title_prefix: str = ""):
         orientation="h",
         title=f"{title_prefix}Tests by file",
         labels={"x": "Test count", "y": "File"},
-        color_discrete_sequence=["#7C3AED"],
+        color_discrete_sequence=["#97876e"],
     )
 
     fig_files.update_layout(
         yaxis={"autorange": "reversed"},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font_color="#111827",
+        font_color="#22304F",
     )
 
     col2.plotly_chart(fig_files, use_container_width=True)
@@ -646,7 +657,7 @@ def render_download_report(
     )
 
     st.download_button(
-        label="⬇️ Download JSON report",
+        label="Download JSON report",
         data=json_bytes.getvalue(),
         file_name=f"{file_base_name}.json",
         mime="application/json",
@@ -659,7 +670,7 @@ def render_download_report(
 # -----------------------------
 
 def render_ruff_tab(uploaded_files: list):
-    st.subheader("🧹 Ruff static analysis")
+    st.subheader(" Ruff static analysis")
     st.caption("Security, correctness, style, complexity, and maintainability checks.")
 
     with st.expander("⚙️ Ruff configuration", expanded=False):
@@ -754,9 +765,9 @@ def render_ruff_tab(uploaded_files: list):
                 )
 
     if st.button(
-        "🚀 Run Ruff analysis",
+        " Run Ruff analysis",
         type="primary",
-        use_container_width=True,
+        use_container_width=False,
         disabled=not uploaded_files,
     ):
         files = [(file.name, file.getvalue()) for file in uploaded_files]
@@ -845,11 +856,11 @@ def render_ruff_tab(uploaded_files: list):
         title="Ruff issues by severity",
         labels={"x": "Severity", "y": "Count"},
         color_discrete_map={
-            "Critical": "#DC2626",
-            "High": "#EA580C",
-            "Medium": "#CA8A04",
-            "Low": "#0284C7",
-            "Info": "#64748B",
+            "Critical": "#e74423",
+            "High": "#f58185",
+            "Medium": "#f1c44b",
+            "Low": "#ba80ba",
+            "Info": "#76808F",
         },
     )
 
@@ -857,7 +868,7 @@ def render_ruff_tab(uploaded_files: list):
         showlegend=False,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font_color="#111827",
+        font_color="#1C2842",
     )
 
     col1.plotly_chart(fig_severity, use_container_width=True)
@@ -874,7 +885,7 @@ def render_ruff_tab(uploaded_files: list):
 
     fig_category.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
-        font_color="#111827",
+        font_color="#27385B",
     )
 
     col2.plotly_chart(fig_category, use_container_width=True)
@@ -908,7 +919,7 @@ def render_ruff_tab(uploaded_files: list):
                         f"[Ruff rule documentation]({finding['url']})"
                     )
 
-    st.subheader("🛠️ Auto-fixable issues")
+    st.subheader(" Auto-fixable issues")
 
     fixable = [item for item in findings if item["fixable"]]
 
@@ -983,7 +994,7 @@ def render_ruff_tab(uploaded_files: list):
 # -----------------------------
 
 def render_pytest_tab(uploaded_files: list):
-    st.subheader("🧪 Pytest test report")
+    st.subheader(" Pytest test report")
     st.caption("Run uploaded pytest files and inspect outcomes, failures, durations, and coverage.")
 
     with st.expander("⚙️ Pytest configuration", expanded=True):
@@ -1108,9 +1119,9 @@ def render_pytest_tab(uploaded_files: list):
         )
 
     if st.button(
-        "🧪 Run Pytest tests",
+        " Run Pytest tests",
         type="primary",
-        use_container_width=True,
+        use_container_width=False,
         disabled=not uploaded_files,
     ):
         pytest_args: list[str] = []
@@ -1249,7 +1260,7 @@ def render_pytest_tab(uploaded_files: list):
         if test["status"] in ("Failed", "Error")
     ]
 
-    st.subheader("❌ Failed tests and errors")
+    st.subheader(" Failed tests and errors")
 
     if not failed_tests:
         st.success("No failed tests or collection errors.")
@@ -1267,7 +1278,7 @@ def render_pytest_tab(uploaded_files: list):
                 if test["error_message"]:
                     st.code(test["error_message"], language="python")
 
-    st.subheader("⏱️ Test durations")
+    st.subheader(" Test durations")
 
     duration_df = pd.DataFrame(tests)
 
@@ -1298,7 +1309,7 @@ def render_pytest_tab(uploaded_files: list):
         )
 
     if enable_coverage:
-        st.subheader("📈 Coverage")
+        st.subheader(" Coverage")
 
         coverage = report.get("coverage", {})
 
@@ -1322,7 +1333,7 @@ def render_pytest_tab(uploaded_files: list):
                     title={"text": "Coverage"},
                     gauge={
                         "axis": {"range": [0, 100]},
-                        "bar": {"color": "#16A34A"},
+                        "bar": {"color": "#499866"},
                         "steps": [
                             {"range": [0, 50], "color": "#FEE2E2"},
                             {"range": [50, 75], "color": "#FEF9C3"},
@@ -1336,7 +1347,7 @@ def render_pytest_tab(uploaded_files: list):
             fig_coverage.update_layout(
                 height=300,
                 paper_bgcolor="rgba(0,0,0,0)",
-                font_color="#111827",
+                font_color="#1F2D4BE1",
             )
 
             st.plotly_chart(fig_coverage, use_container_width=True)
@@ -1346,7 +1357,7 @@ def render_pytest_tab(uploaded_files: list):
                 "and the coverage target is valid."
             )
 
-    st.subheader("📋 All test results")
+    st.subheader(" All test results")
 
     if tests:
         st.dataframe(
@@ -1394,7 +1405,7 @@ def render_pytest_tab(uploaded_files: list):
 
 def render_sidebar():
     with st.sidebar:
-        st.header(f"🟣 {APP_NAME}")
+        st.header(f" {APP_NAME}")
         st.markdown(
             "Upload Python or PySpark scripts, then use the Ruff and Pytest tabs."
         )
@@ -1437,11 +1448,11 @@ def render_sidebar():
 
 def main():
     inject_thanos_watermark()
-    render_sidebar()
+    #render_sidebar()
 
-    st.title(f"🟣 {APP_NAME}")
+    st.title(f" {APP_NAME}")
     st.caption(
-        "Python and PySpark code-quality, security, and test-reporting platform."
+        "The mad Titan."
     )
 
     uploaded_files = st.file_uploader(
@@ -1459,8 +1470,8 @@ def main():
 
     ruff_tab, pytest_tab = st.tabs(
         [
-            "🧹 Ruff Analysis",
-            "🧪 Pytest Report",
+            " Ruff Analysis",
+            " Pytest Report",
         ]
     )
 
